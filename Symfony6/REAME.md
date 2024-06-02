@@ -225,3 +225,121 @@ ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'senha_no
 Após definir a senha, você precisará sair do MySQL digitando exit no prompt do MySQL e, em seguida, fazer login novamente com a nova senha.
 
 ---
+ ### 42. Entity
+
+ Aula: https://www.udemy.com/course/symfony-6/learn/lecture/36642680#overview
+
+ Lembre-se de ter instalado a depencia Maker para executar os comandos dele para criar uma Entity.
+
+```bash
+composer require maker --dev
+```
+
+Depois disso execute o comando para criar a Entity:
+
+```bash
+symfony console make:entity
+```
+
+Depois siga os processos abaixo para criar a Entity de mensagens do portifólio:
+
+ Class name of the entity to create or update (e.g. BraveElephant):
+
+ Messages
+
+ New property name (press <return> to stop adding fields):
+
+ message
+
+  Field type (enter ? to see all types) [string]:
+
+  text
+
+Can this field be null in the database (nullable) (yes/no) [no]:
+
+no
+
+Add another property? Enter the property name (or press <return> to stop adding fields):
+
+cellphone
+
+Tem outros campos que você pode ir criando como:
+
+name, email, cellphone e createAt.
+
+Ele criará um arquivo na pasta migration, outro na pasta Repository e um arquivo chamado Mensages na pasta Entity.
+
+Apenas para você entender, o Entity vai representar uma noticia ou seja, objeto Messages, a Repository vai manipular elas, como salvar, remover, pesquisar. Então todas as ações são feitas por ela.
+
+Agora, iremos criar as migration que serve para criar um arquivo novo de migração de Doctrine, que permite que você gerencie o schema do banco de dados de uma forma estrutura sem perder dados. Esse processo permite que façamos alteração no schema do banco sem perder os dados existentes.
+
+Execute o comando 
+
+```bash
+symfony console make:migration
+```
+
+Ele vai gerar um novo arquivo na pasta migrations, e neste arquivo terá duas funções, uma up e outra down.
+
+O up cria a tabela com os campos que eu pedi pra criar, ou seja, faz a migration.
+
+Já o down, desfaz o comando up, ou seja, ele desfaz a migration.
+
+Depois disso iremos executar o comando para realizar a migração:
+
+```bash
+symfony console doctrine:migrations:migrate
+```
+
+Vai aparecer a mensagem:
+
+WARNING! You are about to execute a migration in database "symfony6" that could result in schema changes and data loss. Are you sure you wish to continue? (yes/no) [yes]:
+
+Você digita yes
+
+Agora iremos visualizar o banco de dados através do comandos abaixo:
+
+Selecionar o banco com usuário root e senha:
+```bash
+mysql -uroot -p symfony6
+```
+
+Visualizar tabelas:
+```bash
+SHOW TABLES;
+```
+
+Mostra as colunas da tabela:
+```bash
+SHOW COLUMNS FROM messages;
+```
+
+Agora irei mostrar os sistema de migração do banco de dados, executaremos o comando:
+```bash
+symfony console doctrine:migrations:status
+```
+
+Vai aparecer uma tabela, e a parte mais importante dela é a Storage que mostra o nome da tabela que fica salva as migrações.
+
+Então toda vez que executamos um make:create, um novo arquivo é criado e quando mandamos executar ele verifica quantos arquivos existem no diretório de migrations, e checa se cada uma deles já foram executados, os que não foram ele executa na ordem.
+
+Também temos outro comando pra listar todos os arquivos de migration possuem no diretório e dados como status dele e horário executado:
+```bash
+symfony console doctrine:migrations:list
+```
+
+Agora iremos ajustar nossa Entity Messages pra fazer com que o campo createAt seja criado automaticamente
+
+Então toda vez que a entity ser criada ele vai gerar esse datetime e nunca mais será alterado:
+
+```bash
+    public function __construct() 
+    {
+        $this->createAt = new \DateTimeImmutable();
+    }
+```
+---
+### 43 - Persistindo dados
+
+Aula - https://www.udemy.com/course/symfony-6/learn/lecture/36642690#overview
+
